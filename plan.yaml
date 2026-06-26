@@ -1,0 +1,26 @@
+apiVersion: upgrade.cattle.io/v1
+kind: Plan
+metadata:
+  name: server-plan-for-v1.34.8-rke2r2
+  namespace: system-upgrade
+  labels:
+    rke2-upgrade: server
+spec:
+  concurrency: 1 # for master nodes
+  nodeSelector:
+    matchExpressions:
+      - {key: node-role.kubernetes.io/control-plane, operator: In, values: ["true"]}
+      - {key: rke2-upgrade, operator: Exists}
+      - {key: rke2-upgrade, operator: NotIn, values: ["disabled", "false"]}
+      - {key: rke2-upgrade-to, operator: In, values: ["v1.34.8-rke2r2"]}
+  tolerations:
+  - key: "node-role.kubernetes.io/master"
+    operator: "Exists"
+    effect: "NoSchedule"
+  serviceAccountName: system-upgrade
+  cordon: true
+  drain:
+    force: true
+  upgrade:
+    image: rancher/rke2-upgrade
+  version: "v1.34.8-rke2r2"
