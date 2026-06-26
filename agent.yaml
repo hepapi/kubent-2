@@ -6,11 +6,12 @@ metadata:
   labels:
     rke2-upgrade: agent
 spec:
-  concurrency: 1
+  concurrency: 3
   nodeSelector:
     matchExpressions:
       - {key: rke2-upgrade, operator: Exists}
       - {key: rke2-upgrade-to, operator: In, values: ["v1.33.12-rke2r2"]}
+      - {key: rke2-upgrade, operator: NotIn, values: ["disabled", "false"]}
   serviceAccountName: system-upgrade
   cordon: true
   drain:
