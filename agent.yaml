@@ -1,0 +1,20 @@
+apiVersion: upgrade.cattle.io/v1
+kind: Plan
+metadata:
+  name: agent-plan-for-v1.33.12-rke2r2
+  namespace: system-upgrade
+  labels:
+    rke2-upgrade: agent
+spec:
+  concurrency: 1
+  nodeSelector:
+    matchExpressions:
+      - {key: rke2-upgrade, operator: Exists}
+      - {key: rke2-upgrade-to, operator: In, values: ["v1.33.12-rke2r2"]}
+  serviceAccountName: system-upgrade
+  cordon: true
+  drain:
+    force: true
+  upgrade:
+    image: rancher/rke2-upgrade
+  version: "v1.33.12-rke2r2"
