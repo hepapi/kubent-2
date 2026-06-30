@@ -34,4 +34,18 @@ grep -o 'const reportJSON = {.*};' rapor.html | sed 's/const reportJSON = //;s/;
 ```bash
 grep -o 'const reportJSON = {.*};' rapor.html | sed 's/const reportJSON = //;s/;$//' \
   | jq -r '"Toplam: \(.ingressCount) | Uyumlu: \(.compatibleIngressCount) | Sorunlu: \(.unsupportedIngressCount)"'
+
+
+# Hızlı özet (terminalde):
+grep -o 'const reportJSON = {.*};' rapor.html | sed 's/const reportJSON = //;s/;$//' | jq .
+
+
+grep -A1 'annotation-badge\|badge-v3' rapor.html \
+  | grep -oE 'nginx\.ingress\.kubernetes\.io/[a-z-]+|v3\.[67]' \
+  | paste -d ' ' - -
+
+
+# unsupported:
+grep -o 'const reportJSON = {.*};' rapor.html | sed 's/const reportJSON = //;s/;$//' \
+  | jq '.unsupportedIngressAnnotations'
 ```
