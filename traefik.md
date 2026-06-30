@@ -10,3 +10,28 @@ ingress-nginx-migration --kubeconfig ~/.kube/config
 
 # tarayıcı yoksa 
 ingress-nginx-migration --kubeconfig ~/.kube/config --format markdown --output-file rapor.md
+
+
+
+
+- html raporunu indirme bunu kubent folderında çalıştıralım
+```bash
+ingress-nginx-migration --kubeconfig ~/.kube/config --addr 127.0.0.1:18080 &
+
+sleep 3
+
+curl -s http://127.0.0.1:18080/ > rapor.html
+
+kill $SRV
+```
+
+- Dosyayı görme
+```bash
+grep -o 'const reportJSON = {.*};' rapor.html | sed 's/const reportJSON = //;s/;$//' | jq .
+```
+
+- Özet
+```bash
+grep -o 'const reportJSON = {.*};' rapor.html | sed 's/const reportJSON = //;s/;$//' \
+  | jq -r '"Toplam: \(.ingressCount) | Uyumlu: \(.compatibleIngressCount) | Sorunlu: \(.unsupportedIngressCount)"'
+```
